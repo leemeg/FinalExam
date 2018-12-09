@@ -1,7 +1,7 @@
 /**
  *   @author Lee Marshall (marshalll@student.ncmich.edu)
  *   @version 0.0.1
- *   @summary
+ *   @summary  Final Exam
  *   @todo Nothing
  */
 
@@ -13,9 +13,13 @@ let continueResponse;
 let sort;
 let operators = [], daily = [];
 
+/**
+ * @method
+ * @desc The dispatch method for our program
+ * @returns {null}
+ */
 function main() {
     loadOperatorData();
-    console.log(operators);
     if (continueResponse !== 0 && continueResponse !== 1) {
         setContinueResponse();
     }
@@ -40,6 +44,11 @@ function main() {
 }
 main();
 
+/**
+ * @method
+ * @desc user visible main options
+ * @returns {action}
+ */
 function chooseMain(action) {
     while (action !== 1 && action !== 2 && action !== 3 && action !== 4 && action !== 5){
         action = Number(PROMPT.question(
@@ -52,8 +61,13 @@ function chooseMain(action) {
             Please enter value: `));
     }
     return action;
-}//user visible main options
+}
 
+/**
+ * @method
+ * @desc sets sort method, calls sortOrder
+ * @returns {null}
+ */
 function sortMenu() {
     let action = -1;
     switch (chooseSort(action)) {
@@ -67,8 +81,13 @@ function sortMenu() {
             break;
     }
     sortOrder(sort);
-}//sets sort method, calls sortOrder
+}
 
+/**
+ * @method
+ * @desc sorts operators
+ * @returns {null}
+ */
 function sortOrder(sort) {
     let temp;
     let swap = 1, i = 0;
@@ -88,8 +107,13 @@ function sortOrder(sort) {
         }
     }
 
-}//sorts operators
+}
 
+/**
+ * @method
+ * @desc  user visible sort options
+ * @returns {action}
+ */
 function chooseSort(action) {
     while (action !== 1 && action !== 2 && action !== 3 && action !== 4 && action !== 5){
         action = Number(PROMPT.question(
@@ -101,8 +125,13 @@ function chooseSort(action) {
             Please enter value: `));
     }
     return action;
-}//user visible sort options
+}
 
+/**
+ * @method
+ * @desc  adds daily data to operators data
+ * @returns {null}
+ */
 function mergeData() {
     const MAX = 4;
     for (let i = 0; i < daily; i++){
@@ -112,8 +141,13 @@ function mergeData() {
     }
     sort = NAME;
     sortOrder(sort);
-}//adds daily data to operators data
+}
 
+/**
+ * @method
+ * @desc  add new oper & pay rate, calls enterDaily, adds all data to operators
+ * @returns {null}
+ */
 function addOperator(){
     const MIN = 10, MAX = 25;
     let l = daily.length;
@@ -133,8 +167,13 @@ function addOperator(){
     let name = daily[l][NAME];
     enterDaily(l, name);
     operators.push(daily[l]);
-}//add new oper & pay rate, calls enterDaily, adds all data to operators
+}
 
+/**
+ * @method
+ * @desc  choose current oper ,calls enterDaily
+ * @returns {null}
+ */
 function setOperator() {
     let oper;
     const MIN = 1;
@@ -155,8 +194,13 @@ function setOperator() {
     let name = operators[oper][NAME];
     daily[l][NAME] = name;
     enterDaily(l, name);
-}//choose current oper ,calls enterDaily
+}
 
+/**
+ * @method
+ * @desc  prompts for operator daily data
+ * @returns {null}
+ */
 function enterDaily(l, name) {
     const MIN = 0, PTMAX = 400, HRMAX = 14;
     while (! daily[l][GOOD] || daily[l][GOOD] < MIN + 1|| daily[l][GOOD] > PTMAX || !/[0-9]/.test(daily[l][GOOD])) {
@@ -181,6 +225,11 @@ function enterDaily(l, name) {
     }
 }
 
+/**
+ * @method
+ * @desc  disp daily data in a chart
+ * @returns {null}
+ */
 function viewDaily() {
     if (daily.length === 0){
         console.log(`\x1Bc`);
@@ -189,30 +238,44 @@ function viewDaily() {
         console.log(`\x1Bc`);
         process.stdout.write(`Operator \tNum good \tNum scrap \tHours worked\tPart/Hour\tScrap % \n========        ========        =========       ============    =========       =======`);
         for (let i = 0; i < daily.length; i++) {
-            let partPerHour = daily[i][GOOD] / daily[i][HOURS];
+            let partPerHour = (daily[i][GOOD] / daily[i][HOURS]).toFixed(1);
             let scrapRate = ((daily[i][BAD] / (daily[i][GOOD] + daily[i][BAD])) * 100).toFixed(1);
             process.stdout.write(` \n${i + 1}) ${daily[i][NAME]}\t\t${daily[i][GOOD]}\t\t${daily[i][BAD]}\t\t${daily[i][HOURS]}\t\t${partPerHour}\t\t${scrapRate}`);
         }
     }
-}//disp daily data in a chart
+}
 
+/**
+ * @method
+ * @desc  populates complex data for operators array
+ * @returns {null}
+ */
 function calcData() {
     for (let i = 0; i < operators.length; i++) {
         operators[i][PT_HOUR] = (operators[i][GOOD] / operators[i][HOURS]).toFixed(1);
         operators[i][SRP_RT] = ((operators[i][BAD] / (operators[i][GOOD] + operators[i][BAD])) * 100).toFixed(1);
         operators[i][COST_PT] = (operators[i][RATE] / operators[i][PT_HOUR]).toFixed(2);
     }
-}//populates complex data for operators array
+}
 
+/**
+ * @method
+ * @desc  disp all data in a chart
+ * @returns {null}
+ */
 function viewTotal() {
     console.log(`\x1Bc`);
-    console.log(operators);
     process.stdout.write(`Num good \tNum scrap \tHours worked\tPart/Hour\tScrap %\t\tCost/Parts\tOperator \n========        =========       ============    =========       =======         =========       ==========`);
     for (let i = 0; i < operators.length; i++) {
         process.stdout.write(` \n  ${operators[i][GOOD]}\t\t  ${operators[i][BAD]}\t\t  ${operators[i][HOURS]}\t\t  ${operators[i][PT_HOUR]}\t\t ${operators[i][SRP_RT]}\t\t  ${operators[i][COST_PT]}\t\t${operators[i][NAME]}`);
     }
-}//disp all data in a chart
+}
 
+/**
+ * @method
+ * @desc  loads & converts csv to array
+ * @returns {null}
+ */
 function loadOperatorData() {
     let operatorFile = IO.readFileSync(`data/operator_data.csv`, 'utf8');
     let lines = operatorFile.toString().split(/\r?\n/); // Automatically creates SD array on newlines
@@ -226,6 +289,11 @@ function loadOperatorData() {
     }
 }
 
+/**
+ * @method
+ * @desc  converts array and stores as csv
+ * @returns {null}
+ */
 function writeOperatorData() {
     const COLUMNS = 5;
     for (let i = 0; i < operators.length; i++) {
@@ -245,6 +313,11 @@ function writeOperatorData() {
     IO.renameSync(`data/dataX.csv`, `data/operator_data.csv`);//renames new file with old name
 }
 
+/**
+ * @method
+ * @desc  loops program
+ * @returns {null}
+ */
 function setContinueResponse() {
     if (continueResponse) {
         continueResponse = -1;
